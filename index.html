@@ -676,8 +676,8 @@
           <label for="message">A note for the couple (optional)</label>
           <textarea id="message" name="message"></textarea>
         </div>
-        <button type="submit" class="rsvp-submit">Send RSVP</button>
-        <p class="rsvp-note">This form is stored on your device only, so it looks and feels finished &mdash; connect it to a form service or your email before sharing the link for real replies.</p>
+        <button type="submit" class="rsvp-submit">Send RSVP on WhatsApp</button>
+        <p class="rsvp-note">This opens WhatsApp with your details filled in &mdash; just hit send there to reach us.</p>
       </form>
       <div class="rsvp-thanks" id="rsvpThanks">
         <p class="script">With love, noted.</p>
@@ -756,12 +756,31 @@
   tick();
   setInterval(tick, 1000);
 
-  // RSVP (client-side only)
+  // RSVP -> WhatsApp
+  const WHATSAPP_NUMBER = "919868117228"; // country code + number, no + or spaces
   const rsvpForm = document.getElementById('rsvpForm');
   rsvpForm.addEventListener('submit', function(e){
     e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const contact = document.getElementById('email').value.trim();
+    const guests = document.getElementById('guests').value.trim();
+    const message = document.getElementById('message').value.trim();
+    const events = Array.from(document.querySelectorAll('input[name="event"]:checked'))
+                         .map(cb => cb.value);
+
+    let text = "RSVP — Kanika & Utkarsh's Wedding\n\n";
+    text += `Name: ${name}\n`;
+    text += `Contact: ${contact}\n`;
+    text += `Attending: ${events.length ? events.join(', ') : 'Not specified'}\n`;
+    text += `Guests: ${guests || '1'}\n`;
+    if(message){ text += `Note: ${message}\n`; }
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+
     rsvpForm.classList.add('hide');
     document.getElementById('rsvpThanks').classList.add('show');
+    window.open(url, '_blank');
   });
 </script>
 
